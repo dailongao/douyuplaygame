@@ -1,7 +1,8 @@
-from socket import *
+import socket 
+import thread
 import time
 
-HOST='221.229.163.130'
+HOST='220.194.199.222'
 PORT=27001
 BUFSIZ=2048
 ADDR=(HOST,PORT)
@@ -11,7 +12,7 @@ joingroup="\x27\x00\x00\x00\x27\x00\x00\x00\xb1\x02\x00\x00type@=joingroup/rid@=
 keeplive="\x21\x00\x00\x00\x21\x00\x00\x00\xb2\x02\x00\x00type@=keeplive/tick@=41/\x00"
 
 # 
-tcpCliSock=socket(AF_INET,SOCK_STREAM)
+tcpCliSock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 tcpCliSock.connect(ADDR)
 
 # login
