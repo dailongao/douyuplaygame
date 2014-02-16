@@ -1,5 +1,5 @@
 
-virtual_key_map = {
+key_code_map = {
 	'`':0,
 	'1':0,
 	'2':0,
@@ -103,9 +103,8 @@ virtual_key_map = {
 	'\\':0
 }
 
-def virtual_key(key):
-	return virtual_key_map[key.lower()];
+def scancode(key):
+	return key_code_map[key.lower()];
 
 if __name__ == '__main__':
-	print virtual_key_map
-	
+	print key_code_map
