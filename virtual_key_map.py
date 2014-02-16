@@ -1,5 +1,6 @@
 
 virtual_key_map = {
+<<<<<<< HEAD
 	'`':0,
 	'1':0,
 	'2':0,
@@ -41,7 +42,7 @@ virtual_key_map = {
 	'':0,
 	'enter':0,
 	'leftshift':0,
-	'z':0,
+	'z':0x5A,
 	'x':0,
 	'c':0,
 	'v':0,
