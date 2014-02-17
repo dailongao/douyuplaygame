@@ -4,24 +4,23 @@ import threading
 import time
 import sys
 import string
+import re
 
 # 
-#HOST='103.244.232.68'
-#PORT=21008
 HOST='220.194.199.222'
 PORT=27001
 BUFSIZ=2048
 ADDR=(HOST,PORT)
-#DEFAULT_ROOM=3258
-DEFAULT_ROOM=215
+DEFAULT_ROOM=7
 
+#
 login_header = '\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00'
 joingroup_header = "\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00"
 keeplive_header = "\x00\x00\x00\x00\x00\x00\x00\x00\xb2\x02\x00\x00"
 
 login_req = "type@=loginreq/username@=acfun_k66hppfz/password@=ee96f962b58e1574007a3af2d07195df/roomid@=%d/\x00"
 joingroup_req = "type@=joingroup/rid@=%d/gid@=0/\x00"
-keeplive_req = "type@=keeplive/tick@=41/\x00"
+keeplive_req = "type@=keeplive/tick@=23/\x00"
 
 login = login_header + login_req
 joingroup = joingroup_header + joingroup_req
@@ -30,6 +29,13 @@ keeplive = keeplive_header + keeplive_req
 # -,-
 TERMINATE = False
 
+#
+def set_len(str):
+	dlen = len(str) - 4
+	s = list(str)
+	s[0] = chr(dlen)
+	s[4] = chr(dlen)
+	return ''.join(s)
 #
 def msg(str):
 	return str[12:]
@@ -42,16 +48,16 @@ def recv_thread_func(hfunc,a2):
 		time.sleep(0.1)
 		data = tcpCliSock.recv(BUFSIZ)
 		str = msg(data)
-		#print(str)
 		hfunc(str)
 
 #		
 def keeplive_thread_func(a1,a2):
+	data = set_len(keeplive)
 	while True:
 		if TERMINATE:
 			return
 		time.sleep(5)
-		tcpCliSock.send(keeplive)
+		tcpCliSock.send(data)
 		
 # 
 def open_socket():
@@ -63,16 +69,9 @@ def open_socket():
 def close_socket():
 	tcpCliSock.close()
 
-def set_len(str):
-	dlen = len(str) - 4
-	s = list(str)
-	s[0] = chr(dlen)
-	s[4] = chr(dlen)
-	return ''.join(s)
-
 #
 def dy_login(roomid):
-	print 'douyu.tv login'
+	print '# Info : douyu.tv login'
 	data = set_len(login % roomid)
 	tcpCliSock.send(data)
 	data = tcpCliSock.recv(BUFSIZ)
@@ -80,14 +79,12 @@ def dy_login(roomid):
 
 #
 def dy_join_group(roomid):
-	print 'douyu.tv join group'
+	print '# Info : douyu.tv join group'
 	data = set_len(joingroup % roomid)
 	tcpCliSock.send(data)
-	data = tcpCliSock.recv(BUFSIZ)
-	print data
 
 #	
-def gao(room_id, hfunc):
+def start_chat(room_id, hfunc):
 	print 'Kai Gao , Room ID :',room_id
 
 	rt = threading.Thread(target=recv_thread_func, args=(hfunc,0))
@@ -98,23 +95,23 @@ def gao(room_id, hfunc):
 	dy_login(room_id)
 	dy_join_group(room_id)
 
-	#return
-	
 	rt.start()
+	kt.start()
+
 	#rt.join()
+	#kt.join()
 	
 	raw_input("press any key to stop")
 	close_socket()
 	TERMINATE = True
-	
-	#kt.start()
-	#kt.join()
-	#while True:
-	#	time.sleep(1)
 
-def print_message(str):
-	print str
+def print_message(data):
+	checkPattern = re.compile(r'content@=(.*)/scope@=/snick@=(.*)/dnick@=')
+	checkResult = checkPattern.search(data).groups()
+
+	for t in checkResult:
+		print t.decode('utf-8')
 
 if __name__ == '__main__':
-	gao(DEFAULT_ROOM, print_message)
+	start_chat(DEFAULT_ROOM, print_message)
 
