@@ -15,32 +15,9 @@ ADDR=(HOST,PORT)
 #DEFAULT_ROOM=3258
 DEFAULT_ROOM=215
 
-#
-# session.write(
-	# HexUtils.setStringHeader(
-		# "b102000074797065403d6c6f67696e7265712f757365726e616d65403de6" + 
-		# HexUtils.Bytes2HexString(this.loginUser.getBytes("UTF8")).replace(" ", "").toLowerCase() + 
-		# "2f70617373776f7264403d313233343536373839303132333435362f726f6f6d6964403d" + 
-		# NumUtils.strNum2Utf8(this.roomNum) + 
-		# "2f00"
-	#)
-#);
-
-java_login = "b102000074797065403d6c6f67696e7265712f757365726e616d65403de6"
-
-# session.write(
-	# HexUtils.setStringHeader(
-		# "b102000074797065403d6a6f696e67726f75702f726964403d" + 
-		# NumUtils.strNum2Utf8(this.roomNum) + 
-		# "2f676964403d302f00"
-	#)
-#);
-
-java_joingroup = "b102000074797065403d6a6f696e67726f75702f726964403d"
-
 login_header = '\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00'
 joingroup_header = "\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00"
-keeplive_header = "\x21\x00\x00\x00\x21\x00\x00\x00\xb2\x02\x00\x00"
+keeplive_header = "\x00\x00\x00\x00\x00\x00\x00\x00\xb2\x02\x00\x00"
 
 login_req = "type@=loginreq/username@=acfun_k66hppfz/password@=ee96f962b58e1574007a3af2d07195df/roomid@=%d/\x00"
 joingroup_req = "type@=joingroup/rid@=%d/gid@=0/\x00"
