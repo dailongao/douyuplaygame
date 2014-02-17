@@ -44,17 +44,24 @@ def msg(str):
 def recv_thread_func(hfunc,a2):
 	while True:
 		if TERMINATE:
+			print 'recv thread terminate'
 			return
 		time.sleep(0.1)
-		data = tcpCliSock.recv(BUFSIZ)
-		str = msg(data)
-		hfunc(str)
+		try:
+			data = tcpCliSock.recv(BUFSIZ)
+			str = msg(data)
+			hfunc(str)
+		except socket.timeout, e:
+			err = e.args[0]
+			if(err == 'timed out'):
+				continue
 
 #		
 def keeplive_thread_func(a1,a2):
 	data = set_len(keeplive)
 	while True:
 		if TERMINATE:
+			print 'keeplive thread terminate'
 			return
 		time.sleep(5)
 		tcpCliSock.send(data)
@@ -68,6 +75,10 @@ def open_socket():
 #	
 def close_socket():
 	tcpCliSock.close()
+
+#
+def set_timeout():
+	tcpCliSock.settimeout(1)
 
 #
 def dy_login(roomid):
@@ -95,22 +106,40 @@ def start_chat(room_id, hfunc):
 	dy_login(room_id)
 	dy_join_group(room_id)
 
+	set_timeout()
+
 	rt.start()
 	kt.start()
-
-	#rt.join()
-	#kt.join()
 	
-	raw_input("press any key to stop")
-	close_socket()
+	#
+	while True:
+		str = raw_input("Press q to exit")
+		if str == 'q':
+			break
+
+	global TERMINATE
 	TERMINATE = True
+
+	try:
+		kt.join();
+	except e:
+		print e
+
+	try:
+		rt.join();
+	except e:
+		print e
+
+	close_socket()
+	
 
 def print_message(data):
 	checkPattern = re.compile(r'content@=(.*)/scope@=/snick@=(.*)/dnick@=')
-	checkResult = checkPattern.search(data).groups()
+	cr = checkPattern.search(data).groups()
 
-	for t in checkResult:
-		print t.decode('utf-8')
+	print cr
+	#print cr[1].decode('utf-8'), ':', cr[0].decode('utf-8')
+	
 
 if __name__ == '__main__':
 	start_chat(DEFAULT_ROOM, print_message)
