@@ -7,7 +7,8 @@ key_code_map = {
 	'z' : 0x2c,
 	'x' : 0x2d,
 	'c' : 0x2e,
-	'v' : 0x2f
+	'v' : 0x2f,
+	'e' : 0x12
 }
 
 def scancode(key):

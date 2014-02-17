@@ -8,34 +8,37 @@ def new_query(msg):
 	res = parse.getinfo(msg)
 	opt = res[0]
 	vaildopt = None
-	if(opt == '上'):
+	if(opt == 'U'):
 		control.sendkey('w')
 		vaildopt = True
-	elif(opt == '下'):
+	elif(opt == 'D'):
 		control.sendkey('s')
 		vaildopt = True
-	elif(opt == '左'):
+	elif(opt == 'L'):
 		control.sendkey('a')
 		vaildopt = True
-	elif(opt == '右'):
+	elif(opt == 'R'):
 		control.sendkey('d')
 		vaildopt = True
 	elif(opt == 'A'):
 		control.sendkey('z')
 		vaildopt = True
 	elif(opt == 'B'):
-		control.sendkey('x')
+		control.sendkey('e')
 		vaildopt = True
-	elif(opt == '开始'):
+	elif(opt == 'START'):
 		control.sendkey('c')
 		vaildopt = True
-	elif(opt == '选择'):
+	elif(opt == 'SELECT'):
 		control.sendkey('v')
 		vaildopt = True
 	else:
 		vaildopt = False
 	if(vaildopt == True):
-		print(res[1] + ": " + opt.decode('utf-8'))
+		try:
+			print(res[1].decode('utf-8') + ": " + opt.decode('utf-8'))
+		except:
+			print('error in print message')
 
 # setting
 chatroom_id = 620
