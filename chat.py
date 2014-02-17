@@ -9,15 +9,16 @@ HOST='220.194.199.222'
 PORT=27001
 BUFSIZ=2048
 ADDR=(HOST,PORT)
-DEFAULT_ROOM=3258
+#DEFAULT_ROOM=3258
+DEFAULT_ROOM=7
 
 #
-login_header = "\x59\x00\x00\x00\x59\x00\x00\x00\xb1\x02\x00\x00"
-joingroup_header = "\x2a\x00\x00\x00\x2a\x00\x00\x00\xb1\x02\x00\x00"
+login_header = "\x56\x00\x00\x00\x56\x00\x00\x00\xb1\x02\x00\x00"
+joingroup_header = "\x29\x00\x00\x00\x29\x00\x00\x00\xb1\x02\x00\x00"
 keeplive_header = "\x21\x00\x00\x00\x21\x00\x00\x00\xb2\x02\x00\x00"
 
 login_req = "type@=loginreq/username@=acfun_k66hppfz/password@=1234567890123456/roomid@=%d/\x00"
-joingroup_req = "type@=joingroup/rid@=%d/gid@=0/\x00"
+joingroup_req = "type@=joingroup/rid@=%d/gid@=157/\x00"
 keeplive_req = "type@=keeplive/tick@=41/\x00"
 
 login = login_header + login_req
