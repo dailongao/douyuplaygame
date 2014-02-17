@@ -3,22 +3,47 @@ import thread
 import threading
 import time
 import sys
+import string
 
 # 
+#HOST='103.244.232.68'
+#PORT=21008
 HOST='220.194.199.222'
 PORT=27001
 BUFSIZ=2048
 ADDR=(HOST,PORT)
 #DEFAULT_ROOM=3258
-DEFAULT_ROOM=7
+DEFAULT_ROOM=215
 
 #
-login_header = "\x56\x00\x00\x00\x56\x00\x00\x00\xb1\x02\x00\x00"
-joingroup_header = "\x29\x00\x00\x00\x29\x00\x00\x00\xb1\x02\x00\x00"
+# session.write(
+	# HexUtils.setStringHeader(
+		# "b102000074797065403d6c6f67696e7265712f757365726e616d65403de6" + 
+		# HexUtils.Bytes2HexString(this.loginUser.getBytes("UTF8")).replace(" ", "").toLowerCase() + 
+		# "2f70617373776f7264403d313233343536373839303132333435362f726f6f6d6964403d" + 
+		# NumUtils.strNum2Utf8(this.roomNum) + 
+		# "2f00"
+	#)
+#);
+
+java_login = "b102000074797065403d6c6f67696e7265712f757365726e616d65403de6"
+
+# session.write(
+	# HexUtils.setStringHeader(
+		# "b102000074797065403d6a6f696e67726f75702f726964403d" + 
+		# NumUtils.strNum2Utf8(this.roomNum) + 
+		# "2f676964403d302f00"
+	#)
+#);
+
+java_joingroup = "b102000074797065403d6a6f696e67726f75702f726964403d"
+
+login_header = '\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00'
+joingroup_header = "\x00\x00\x00\x00\x00\x00\x00\x00\xb1\x02\x00\x00"
 keeplive_header = "\x21\x00\x00\x00\x21\x00\x00\x00\xb2\x02\x00\x00"
 
-login_req = "type@=loginreq/username@=acfun_k66hppfz/password@=1234567890123456/roomid@=%d/\x00"
-joingroup_req = "type@=joingroup/rid@=%d/gid@=157/\x00"
+login_req = "type@=loginreq/username@=acfun_k66hppfz/password@=ee96f962b58e1574007a3af2d07195df/roomid@=%d/\x00"
+joingroup_req = "type@=joingroup/rid@=%d/gid@=0/\x00"
 keeplive_req = "type@=keeplive/tick@=41/\x00"
 
 login = login_header + login_req
@@ -61,15 +86,28 @@ def open_socket():
 def close_socket():
 	tcpCliSock.close()
 
+def set_len(str):
+	dlen = len(str) - 4
+	s = list(str)
+	s[0] = chr(dlen)
+	s[4] = chr(dlen)
+	return ''.join(s)
+
 #
 def dy_login(roomid):
 	print 'douyu.tv login'
-	tcpCliSock.send(login % roomid)
+	data = set_len(login % roomid)
+	tcpCliSock.send(data)
+	data = tcpCliSock.recv(BUFSIZ)
+	print data
 
 #
 def dy_join_group(roomid):
 	print 'douyu.tv join group'
-	tcpCliSock.send(joingroup % roomid)
+	data = set_len(joingroup % roomid)
+	tcpCliSock.send(data)
+	data = tcpCliSock.recv(BUFSIZ)
+	print data
 
 #	
 def gao(room_id, hfunc):
@@ -82,6 +120,8 @@ def gao(room_id, hfunc):
 	
 	dy_login(room_id)
 	dy_join_group(room_id)
+
+	#return
 	
 	rt.start()
 	#rt.join()
