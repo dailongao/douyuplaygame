@@ -26,3 +26,4 @@ def sendkey(key):
 	win32api.PostMessage(first_child, win32con.WM_KEYDOWN, vkeycode, downkey);
 	time.sleep(0.05)
 	win32api.PostMessage(first_child, win32con.WM_KEYUP, vkeycode, upkey)
+	time.sleep(0.05)
