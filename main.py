@@ -3,86 +3,79 @@
 import chat
 import control
 import parse
+import time
+import sys
 
-def try_opt(opt):
-	vaildopt = False
-	if(opt == 'U'):
-		control.sendkey('w')
-		vaildopt = True
-	elif(opt == 'D'):
-		control.sendkey('s')
-		vaildopt = True
-	elif(opt == 'L'):
-		control.sendkey('a')
-		vaildopt = True
-	elif(opt == 'R'):
-		control.sendkey('d')
-		vaildopt = True
-	elif(opt == 'A'):
-		control.sendkey('z')
-		vaildopt = True
-	elif(opt == 'B'):
-		control.sendkey('e')
-		vaildopt = True
-	elif(opt == 'START'):
-		control.sendkey('c')
-		vaildopt = True
-	elif(opt == 'SELECT'):
-		control.sendkey('v')
-		vaildopt = True
-	else:
-		vaildopt = False
-	return vaildopt
+# the max length of danmu on douyu.tv is 20..
+MAX_MSG_LEN = 20
+DEFAULT_CHAT_ROOM = 6032
+NO_EXEC = False
 
-def new_query(msg):
-	try:
-		MAX_OPT_N=16
-		count = 1
-		
-		res = parse.getinfo(msg)
-		opt_str = res[0]
+command_map = {
+	'U' : 'w',
+	'D' : 's',
+	'L' : 'a',
+	'R' : 'd',
+	'A' : 'z',
+	'B' : 'e',
+	'START' : 'c',
+	'SELECT' : 'v'
+}
 
-		# check long operation
-		if (opt_str == 'START') or (opt_str == 'SELECT'):
-			vflag = try_opt(opt_str)
-			if(vflag == True):
-				print(res[1].decode('utf-8') + ": " + opt.decode('utf-8')), count
-			else:
-				return
-			return
+def check_command(umsg):
+	# check string message
+	if umsg in command_map:
+		return True
+	# check message length
+	if len(umsg) > MAX_MSG_LEN:
+		return False;
+	# check single-char message
+	for c in umsg:
+		if c not in command_map:
+			return False
+	return True
 
-		# check single char operation
-		opt_list = list(res[0])
-		print opt_list
-		first_opt = opt_list[0]
-		print 'first is', first_opt
-		
-		for opt in opt_list:	
-			print 'loop', opt
-			if not(opt == first_opt):
-				return
-			if(count>MAX_OPT_N):
-				return
+def print_log(uname,ucmd,cnt,ftime):
+	if ftime:
+		print "#", time.strftime('%H:%M:%S')
+	print uname.decode('utf-8'), ':', ucmd,cnt
 
-			#print opt
-			try:
-				vflag = try_opt(opt)
-			except:
-				return
-			
-			#	
-			if(vflag == True):
-				print(res[1].decode('utf-8') + ": " + opt.decode('utf-8')), count
-			else:
-				return
+def do_send_key(cmd):
+	if not NO_EXEC:
+		control.sendkey(cmd)
 
-			count = count + 1
-	except:
+def run_command(uname,ucmd):
+	if ucmd in command_map:
+		do_send_key(command_map[ucmd])
+		print_log(uname,ucmd,1,True)
 		return
 
-# setting
-chatroom_id = 6032
+	cnt = 0
+	for c in ucmd:
+		cnt = cnt + 1
+		do_send_key(command_map[c])
+		print_log(uname,c,cnt,cnt==1)
 
-# init
-control.control_init()
-chat.start_chat(chatroom_id, new_query)
+def new_query(raw_msg):
+	try:
+		# 
+		msg = parse.getinfo(raw_msg)
+		cmd_str = msg[0]
+		user_name = msg[1]
+
+		#
+		if not check_command(cmd_str):
+			return
+
+		#
+		run_command(user_name,cmd_str)
+		
+	except:
+		print sys.exc_info()[0]
+		print sys.exc_info()[1]
+		return
+
+#
+if __name__ == '__main__':
+	control.control_init()
+	chat.start_chat(DEFAULT_CHAT_ROOM, new_query)
