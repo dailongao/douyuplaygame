@@ -7,31 +7,43 @@ import time
 import sys
 
 # the max length of danmu on douyu.tv is 20..
+MAX_MSG_LEN = 16
 DEFAULT_CHAT_ROOM = 6032
 NO_EXEC = False
+START_TIME_LIMIT = 30
 
 command_map = {
-
-	#
-	'8' : 'UPARROW',
-	'2' : 'DOWNARROW',
-	'4' : 'LEFTARROW',
-	'6' : 'RIGHTARROW',
-
-	#
-	'SPACE' : 'SPACE',
-	'CTRL' : 'LEFTCTRL',
-	'SHIFT' : 'LEFTSHIFT',
-
-	#
-	'Z' : 'Z',
-	'A' : 'A',
-	'B' : 'B',
-	'M' : 'M',
-	'X' : 'X',
-	'C' : 'C',
-	'V' : 'V'
+	'U' : 'w',
+	'D' : 's',
+	'L' : 'a',
+	'R' : 'd',
+	'A' : 'z',
+	'B' : 'e',
+	'START' : 'c',
+	'SELECT' : 'v'
 }
+
+#
+class User:
+	def __init__(self,name):
+		self.name = name
+		self.last_start_time = time.time() - 64
+		self.last_cmd_time = time.time() - 64
+
+	def check_start(self):
+		if time.time() - self.last_start_time < START_TIME_LIMIT:
+			print 
+			return False
+
+	def run(self,cmd):
+		self.last_cmd_time = time.time()
+		if cmd == 'START' and check_start():
+			self.last_start_time = time.time()
+		else:
+			run_command(self.name,cmd)
+
+#
+users = {}
 
 #
 def print_strings(*strs):
@@ -109,10 +121,5 @@ def new_query(raw_msg):
 
 #
 if __name__ == '__main__':
-	control.control_init('空之轨迹 ＦＣ')
-	#control.control_init('搶曽怱鉟極')
-	while True:
-		control.sendkey('Z')
-		time.sleep(1)
-
-	#chat.start_chat(DEFAULT_CHAT_ROOM, new_query)
+	control.control_init()
+	chat.start_chat(DEFAULT_CHAT_ROOM, new_query)
