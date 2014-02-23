@@ -30,8 +30,6 @@ def sendkey_old(key,pdelay = 0.05, rdelay = 0.05):
 
 def sendkey(key,pdelay = 0.05, rdelay = 0.05):
 	shell = win32com.client.Dispatch('WScript.Shell')
-	shell.Run('notepad')
-	time.sleep(0.1)
 	shell.SendKeys("ZZZZZ", 0)
 
 if __name__ == '__main__':
