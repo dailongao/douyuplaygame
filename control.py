@@ -8,6 +8,9 @@ def list_child(hwnd, lParam):
 	return False
 	
 def control_init(title = 'No$gba Emulator '):
+	global shell
+	shell = win32com.client.Dispatch('WScript.Shell')
+
 	hwnd = win32gui.FindWindow(None, title)
 	first_child = None
 
@@ -29,11 +32,11 @@ def sendkey_old(key,pdelay = 0.05, rdelay = 0.05):
 	time.sleep(rdelay)
 
 def sendkey(key,pdelay = 0.05, rdelay = 0.05):
-	shell = win32com.client.Dispatch('WScript.Shell')
+	#shell = win32com.client.Dispatch('WScript.Shell')
 	shell.SendKeys("ZZZZZ", 0)
 
 if __name__ == '__main__':
-	shell = win32com.client.Dispatch('WScript.Shell')
+	
 	shell.Run('notepad')
 	time.sleep(0.1)
 	shell.AppActivate('notepad')
