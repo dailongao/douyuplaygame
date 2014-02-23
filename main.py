@@ -7,38 +7,70 @@ import time
 import sys
 
 # the max length of danmu on douyu.tv is 20..
-MAX_MSG_LEN = 20
 DEFAULT_CHAT_ROOM = 6032
 NO_EXEC = False
 
 command_map = {
-	'U' : 'w',
-	'D' : 's',
-	'L' : 'a',
-	'R' : 'd',
-	'A' : 'z',
-	'B' : 'e',
-	'START' : 'c',
-	'SELECT' : 'v'
+
+	#
+	'8' : 'UPARROW',
+	'2' : 'DOWNARROW',
+	'4' : 'LEFTARROW',
+	'6' : 'RIGHTARROW',
+
+	#
+	'SPACE' : 'SPACE',
+	'CTRL' : 'LEFTCTRL',
+	'SHIFT' : 'LEFTSHIFT',
+
+	#
+	'Z' : 'Z',
+	'A' : 'A',
+	'B' : 'B',
+	'M' : 'M',
+	'X' : 'X',
+	'C' : 'C',
+	'V' : 'V'
 }
+
+#
+def print_strings(*strs):
+	for s in strs:
+		try:
+			print s.decode('utf-8'),
+		except:
+			print "!@#$%^&*",
+	print ''
+
+def get_user(uname):
+	if uname not in users:
+		users[uname] = User
+	return users[uname]
 
 def check_command(umsg):
 	# check string message
 	if umsg in command_map:
 		return True
-	# check message length
-	if len(umsg) > MAX_MSG_LEN:
-		return False;
+	
 	# check single-char message
 	for c in umsg:
 		if c not in command_map:
 			return False
+
+	# check message length
+	if len(umsg) > MAX_MSG_LEN:
+		print '指令长度限制为'.decode('utf-8'), MAX_MSG_LEN
+		return False;
+
 	return True
 
 def print_log(uname,ucmd,cnt,ftime):
 	if ftime:
 		print "#", time.strftime('%H:%M:%S')
-	print uname.decode('utf-8'), ':', ucmd,cnt
+	try:
+		print uname.decode('utf-8'), ':', ucmd, cnt
+	except:
+		print "!@#$%^&*", ':', ucmd, cnt
 
 def do_send_key(cmd):
 	if not NO_EXEC:
@@ -77,5 +109,10 @@ def new_query(raw_msg):
 
 #
 if __name__ == '__main__':
-	control.control_init()
-	chat.start_chat(DEFAULT_CHAT_ROOM, new_query)
+	control.control_init('空之轨迹 ＦＣ')
+	#control.control_init('搶曽怱鉟極')
+	while True:
+		control.sendkey('Z')
+		time.sleep(1)
+
+	#chat.start_chat(DEFAULT_CHAT_ROOM, new_query)
