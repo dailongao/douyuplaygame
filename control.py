@@ -1,4 +1,4 @@
-import win32api,win32gui,win32con
+import win32api,win32gui,win32con,win32com,win32com.client
 import time
 import virtual_key_map, scancode_map
 
@@ -16,7 +16,8 @@ def control_init(title = 'No$gba Emulator '):
 	except:
 		print("control_init() ok")
 		
-def sendkey(key,pdelay = 0.05, rdelay = 0.05):
+#def sendkey(key,pdelay = 0.05, rdelay = 0.05):
+def sendkey_old(key,pdelay = 0.05, rdelay = 0.05):
 	global first_child
 	vkeycode = virtual_key_map.virtual_key(key)
 	skeycode = scancode_map.scancode(key)
@@ -26,3 +27,18 @@ def sendkey(key,pdelay = 0.05, rdelay = 0.05):
 	time.sleep(pdelay)
 	win32api.PostMessage(first_child, win32con.WM_KEYUP, vkeycode, upkey)
 	time.sleep(rdelay)
+
+def sendkey(key,pdelay = 0.05, rdelay = 0.05):
+	shell = win32com.client.Dispatch('WScript.Shell')
+	shell.Run('notepad')
+	time.sleep(0.1)
+	shell.SendKeys("ZZZZZ", 0)
+
+if __name__ == '__main__':
+	shell = win32com.client.Dispatch('WScript.Shell')
+	shell.Run('notepad')
+	time.sleep(0.1)
+	shell.AppActivate('notepad')
+	shell.SendKeys("Hello World", 0)
+	shell.SendKeys("Z", 0)
+	shell.SendKeys("{F5}", 0)   # F5 prints the time/date
